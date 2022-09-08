@@ -69,4 +69,13 @@ const HomeScreen = ({navigation}) => {
   );
 };
 
+//TODO:
+// 1. Carregar boletos do storage
+// 2. Colocar na memória os próximos 12 meses
+// 3. O objeto salvo na memória deve ser um array com 12 posições, cada posição, um mês
+// 4. No objeto deve ter: Nome do mês, ano, array de boletos daquele mês
+// 5. Cadas boleto no array deve conter: description, price, status, dueDate
+// 6. status deve ser definidio consultado uma tabela que guardará as contas que já foram pagas, se ela não foi paga, verificar se já venceu
+// 7. Deve ter uma seta para trocar o mês na página inicial
+
 export default HomeScreen;

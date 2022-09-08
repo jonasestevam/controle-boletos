@@ -37,4 +37,5 @@ export const OptionText = styled.Text<IOptionText>`
 export const OptionIcon = styled(Icon)`
   font-size: ${({theme}) => theme.SIZES.xMedium}px;
   margin-right: ${({theme}) => theme.SIZES.medium}px;
+  color: ${({theme}) => theme.COLORS.white};
 `;
