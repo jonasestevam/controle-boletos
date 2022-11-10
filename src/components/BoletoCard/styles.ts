@@ -19,16 +19,6 @@ const getStatusColor = (status: StatusBoletos | undefined): string => {
   }
 };
 
-export const MenuTriggerContainer = styled.TouchableOpacity`
-  background-color: ${({theme}) => theme.COLORS.black};
-  padding: ${({theme}) => theme.SIZES.xMedium}px;
-  border-radius: ${({theme}) => theme.SIZES.small}px;
-  border-color: ${({theme}) => theme.COLORS.black};
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 export const DueDateContainer = styled.View`
   height: ${({theme}) => theme.SIZES.large}px;
   width: ${({theme}) => theme.SIZES.large}px;

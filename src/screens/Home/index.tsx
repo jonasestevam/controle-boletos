@@ -1,28 +1,33 @@
 import React, {useEffect, useState} from 'react';
-import {ListRenderItem} from 'react-native';
+import {ListRenderItem, View} from 'react-native';
 import AddButton from '../../components/AddButton';
 import BoletoCard from '../../components/BoletoCard';
 import Indicator from '../../components/Indicator';
-import {translate} from '../../i18n/locales';
+import {buildTheYear, IBoleto, IMonth} from '../../models/boleto.model';
 import {useStoreBoletos} from '../../services/BoletosService';
-import getMonthNameByNumber from '../../utils/getMonthNameByNumber';
 import {
   BoletosList,
   Container,
   HeaderContainer,
   HeaderText,
   IndicatorsContainer,
+  MonthsList,
+  MonthsListContainer,
   SubHeaderText,
 } from './styles';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({navigation}: any) => {
   const [isLoading] = useState(false);
-  const [outcomeValue, setOutcomeValue] = useState(0);
+  const [months, setMonths] = useState<IMonth[]>();
 
   const loadBoletos = useStoreBoletos(state => state.load);
   const boletos = useStoreBoletos(state => state.boletos);
 
-  const RenderItem: ListRenderItem<any> = ({item}) => (
+  const outcome = boletos.reduce((accumulator, boleto) => {
+    return accumulator + Number(boleto.price);
+  }, 0);
+
+  const RenderBoletos: ListRenderItem<any> = ({item}) => (
     <BoletoCard boleto={item} />
   );
 
@@ -38,29 +43,36 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(() => {
     if (boletos.length) {
-      const outcome = boletos.reduce((accumulator, boleto) => {
-        return accumulator + Number(boleto.price);
-      }, 0);
-      setOutcomeValue(outcome);
+      setMonths(buildTheYear(boletos));
     }
   }, [boletos]);
 
+  const RenderMonthsItem: ListRenderItem<IMonth> = ({item}) => {
+    return (
+      <MonthsListContainer>
+        <HeaderContainer>
+          <HeaderText>{item.name}</HeaderText>
+          <SubHeaderText>{item.year}</SubHeaderText>
+        </HeaderContainer>
+        <IndicatorsContainer>
+          <Indicator amount={0} type="income" />
+          <Indicator amount={outcome} type="outcome" />
+        </IndicatorsContainer>
+        <BoletosList data={item.boletos} renderItem={RenderBoletos} />
+      </MonthsListContainer>
+    );
+  };
   return (
     <>
       {!isLoading && (
         <>
           <Container>
-            <HeaderContainer>
-              <HeaderText>
-                {translate(getMonthNameByNumber(new Date().getMonth() + 1))}
-              </HeaderText>
-              <SubHeaderText>{new Date().getFullYear()}</SubHeaderText>
-            </HeaderContainer>
-            <IndicatorsContainer>
-              <Indicator amount={0} type="income" />
-              <Indicator amount={outcomeValue} type="outcome" />
-            </IndicatorsContainer>
-            <BoletosList data={boletos} renderItem={RenderItem} />
+            <MonthsList
+              horizontal
+              pagingEnabled
+              data={months}
+              renderItem={RenderMonthsItem}
+            />
           </Container>
           <AddButton action={onClickAddHandler} />
         </>
@@ -77,5 +89,8 @@ const HomeScreen = ({navigation}) => {
 // 5. Cadas boleto no array deve conter: description, price, status, dueDate
 // 6. status deve ser definidio consultado uma tabela que guardará as contas que já foram pagas, se ela não foi paga, verificar se já venceu
 // 7. Deve ter uma seta para trocar o mês na página inicial
+
+//TODO:
+// IGNORAR HORÁRIO NA GERAÇÃO DOS BOLETOS, PARA EVITAR PROBLEMAS NO FUTURO
 
 export default HomeScreen;

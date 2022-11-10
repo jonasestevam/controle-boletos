@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import Toast from 'react-native-toast-message';
 import {
   CheckboxContainer,
   Container,
@@ -6,10 +7,9 @@ import {
   StepContainer,
   Text,
 } from './styles';
-import Toast from 'react-native-toast-message';
 
-import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import {useForm} from 'react-hook-form';
 import {TextInput} from 'react-native';
@@ -19,12 +19,9 @@ import {ControlledTextInput} from '../../components/ControlledTextInput';
 import {DatePicker} from '../../components/DatePicker';
 import {Header} from '../../components/Header';
 import {TabNavigator} from '../../components/TabNavigator';
-import theme from '../../theme';
-import IBoleto from './IBoleto';
+import IBoleto, {TPeriod} from '../../models/boleto.model';
 import {useStoreBoletos} from '../../services/BoletosService';
-
-export type TPeriod = 'MONTHLY' | 'WEEKLY' | 'ONCE';
-
+import theme from '../../theme';
 const controlledFormSchema = yup.object({
   price: yup.string().required('Informe o valor do boleto'),
   description: yup.string().max(25).required('Informe uma descrição'),
@@ -44,7 +41,7 @@ const AddBoleto = ({navigation}) => {
   const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-  const [isRecurrent, setIsRecurrent] = useState<boolean>(false);
+  // const [isRecurrent, setIsRecurrent] = useState<boolean>(false);
   const [period, setPeriodo] = useState<TPeriod>('MONTHLY');
 
   const saveBoleto = useStoreBoletos(state => state.save);
@@ -89,6 +86,10 @@ const AddBoleto = ({navigation}) => {
   );
 
   const handleAddBoleto = (data: IBoleto) => {
+    let isRecurrent = true;
+    if (period !== 'MONTHLY') {
+      isRecurrent = false;
+    }
     const inputData: IBoleto = {...data, period, isRecurrent, dueDate};
     saveBoleto(curentBoletosList, inputData);
     Toast.show({
@@ -201,14 +202,14 @@ const AddBoleto = ({navigation}) => {
                 setPeriodo('MONTHLY');
               }}
             />
-            <Checkbox
+            {/* <Checkbox
               selected={period === 'WEEKLY'}
               text="TODA SEMANA"
               onPress={() => {
                 if (period === 'WEEKLY') return;
                 setPeriodo('WEEKLY');
               }}
-            />
+            /> */}
           </CheckboxContainer>
         </StepContainer>
       </Container>

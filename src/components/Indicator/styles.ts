@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {IIndicator} from './IIndicator';
 
 export const Container = styled.View<IIndicator>`
-  padding-left: ${({theme}) => theme.SIZES.small}px;
+  /* padding-left: ${({theme}) => theme.SIZES.small}px; */
   margin-top: ${({theme}) => theme.SIZES.medium}px;
   margin-bottom: ${({theme}) => theme.SIZES.large}px;
   flex-direction: row;

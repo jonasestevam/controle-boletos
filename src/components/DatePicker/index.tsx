@@ -11,8 +11,6 @@ import {
   MonthText,
 } from './styles';
 import {TouchableOpacity} from 'react-native';
-import getMonthNameByNumber from '../../utils/getMonthNameByNumber';
-import {translate} from '../../i18n/locales';
 
 interface IDatePicker {
   onDateChange: (args: Date | undefined) => void;
@@ -41,7 +39,7 @@ export const DatePicker = ({onDateChange, value}: IDatePicker) => {
 
   const getMonth = (): string | undefined => {
     if (value) {
-      return translate(getMonthNameByNumber(value.getMonth() + 1));
+      return new Date().toLocaleString('default', {month: 'long'});
     }
   };
 

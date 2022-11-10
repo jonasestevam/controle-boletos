@@ -6,9 +6,10 @@ import {
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import {widthPercentageToDP} from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
 import {translate} from '../../i18n/locales';
-import IBoleto from '../../screens/AddBoleto/IBoleto';
+import IBoleto from '../../models/boleto.model';
 import theme from '../../theme';
 import currencyFormat from '../../utils/currencyFormat';
 import {Option, Container as MenuContainer} from '../MenuOptions';
@@ -57,6 +58,7 @@ const cardStyle: StyleProp<ViewStyle> = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  width: widthPercentageToDP(92),
 };
 
 const BoletoCard = ({boleto}: IBoletoCard) => {

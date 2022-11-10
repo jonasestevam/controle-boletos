@@ -1,4 +1,7 @@
-import {heightPercentageToDP as heightDP} from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP as heightDP,
+  widthPercentageToDP as widthDP,
+} from 'react-native-responsive-screen';
 
 export default {
   COLORS: {
@@ -21,5 +24,7 @@ export default {
     xMedium: heightDP(3),
     large: heightDP(5),
     xLarge: heightDP(7),
+    screenWidth: widthDP(100),
+    screenHeight: heightDP(100),
   },
 };
