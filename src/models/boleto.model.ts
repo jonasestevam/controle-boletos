@@ -24,8 +24,9 @@ export function buildTheYear(boletos: IBoleto[]): IMonth[] {
   for (let i = 0; i < 12; i++) {
     const date = new Date();
     date.setMonth(new Date().getMonth() + i);
+    const monthName = date.toLocaleString('default', {month: 'long'});
     months.push({
-      name: date.toLocaleString('default', {month: 'long'}),
+      name: monthName.charAt(0).toUpperCase() + monthName.slice(1),
       year: date.getFullYear().toString(),
       boletos: boletos.filter(boleto => {
         return (

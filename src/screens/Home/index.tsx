@@ -3,10 +3,12 @@ import {ListRenderItem, View} from 'react-native';
 import AddButton from '../../components/AddButton';
 import BoletoCard from '../../components/BoletoCard';
 import Indicator from '../../components/Indicator';
-import {buildTheYear, IBoleto, IMonth} from '../../models/boleto.model';
+import {buildTheYear, IMonth} from '../../models/boleto.model';
 import {useStoreBoletos} from '../../services/BoletosService';
 import {
+  ArrowRight,
   BoletosList,
+  ButtonChangePage,
   Container,
   HeaderContainer,
   HeaderText,
@@ -51,8 +53,12 @@ const HomeScreen = ({navigation}: any) => {
     return (
       <MonthsListContainer>
         <HeaderContainer>
-          <HeaderText>{item.name}</HeaderText>
-          <SubHeaderText>{item.year}</SubHeaderText>
+          <ButtonChangePage name="caretleft" direction="left" />
+          <View>
+            <HeaderText>{item.name}</HeaderText>
+            <SubHeaderText>{item.year}</SubHeaderText>
+          </View>
+          <ButtonChangePage name="caretright" direction="right" />
         </HeaderContainer>
         <IndicatorsContainer>
           <Indicator amount={0} type="income" />

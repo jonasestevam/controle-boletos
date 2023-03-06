@@ -5,7 +5,7 @@ import {
 
 export default {
   COLORS: {
-    white: '#fff',
+    white: '#ffffff',
     red: '#CC444B',
     pink: '#EBBCBC',
     black: '#1E1E21',

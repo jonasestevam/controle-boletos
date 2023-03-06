@@ -1,9 +1,23 @@
 import styled from 'styled-components/native';
+import Icon from 'react-native-vector-icons/AntDesign';
+
+export interface IChangePageBt {
+  direction?: 'right' | 'left';
+}
 
 export const Container = styled.View`
   flex: 1;
   padding: ${({theme}) => theme.SIZES.medium}px;
   background-color: ${({theme}) => theme.COLORS.darker_black};
+`;
+
+export const ButtonChangePage = styled(Icon)<IChangePageBt>`
+  font-size: ${({theme, direction}) =>
+    direction === 'left' ? theme.SIZES.medium : theme.SIZES.xMedium}px;
+  color: ${({theme, direction}) =>
+    direction === 'left'
+      ? theme.COLORS.white + 'BB'
+      : theme.COLORS.white + 'FF'};
 `;
 
 export const MonthsList = styled.FlatList`
@@ -17,7 +31,7 @@ export const MonthsListContainer = styled.View`
 
 export const HeaderText = styled.Text`
   font-family: ${({theme}) => theme.FONTS.bold};
-  font-size: ${({theme}) => theme.SIZES.xLarge}px;
+  font-size: ${({theme}) => theme.SIZES.large}px;
   color: ${({theme}) => theme.COLORS.white};
 `;
 
@@ -31,6 +45,8 @@ export const SubHeaderText = styled.Text`
 export const HeaderContainer = styled.View`
   width: ${({theme}) => theme.SIZES.screenWidth}px;
   padding-top: ${({theme}) => theme.SIZES.large}px;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const IndicatorsContainer = styled.View`
