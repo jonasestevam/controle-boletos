@@ -3,10 +3,8 @@ import {ListRenderItem, View} from 'react-native';
 import AddButton from '../../components/AddButton';
 import BoletoCard from '../../components/BoletoCard';
 import Indicator from '../../components/Indicator';
-import {buildTheYear, IMonth} from '../../models/boleto.model';
-import {useStoreBoletos} from '../../services/BoletosService';
+import {buildTheYear, useStoreBoletos} from '../../services/BoletosService';
 import {
-  ArrowRight,
   BoletosList,
   ButtonChangePage,
   Container,

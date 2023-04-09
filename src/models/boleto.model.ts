@@ -18,25 +18,4 @@ export interface IMonth {
   boletos: IBoleto[] | undefined;
 }
 
-export function buildTheYear(boletos: IBoleto[]): IMonth[] {
-  const months: IMonth[] = [];
-  //pega o mês atual e mais 11 meses seguintes
-  for (let i = 0; i < 12; i++) {
-    const date = new Date();
-    date.setMonth(new Date().getMonth() + i);
-    const monthName = date.toLocaleString('default', {month: 'long'});
-    months.push({
-      name: monthName.charAt(0).toUpperCase() + monthName.slice(1),
-      year: date.getFullYear().toString(),
-      boletos: boletos.filter(boleto => {
-        return (
-          (new Date(boleto.dueDate).getMonth() === date.getMonth() ||
-            boleto.isRecurrent) &&
-          new Date(boleto.dueDate) < date
-        );
-      }),
-    });
-  }
 
-  return months;
-}
