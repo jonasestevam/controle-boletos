@@ -23,4 +23,5 @@ export interface IMonth {
 export interface IPaidBoleto {
   idBoleto: string;
   paidBoletoMonth: Date;
+  compositeKey?: string;
 }

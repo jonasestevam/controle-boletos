@@ -39,7 +39,7 @@ export const DatePicker = ({onDateChange, value}: IDatePicker) => {
 
   const getMonth = (): string | undefined => {
     if (value) {
-      return new Date().toLocaleString('default', {month: 'long'});
+      return new Date(value).toLocaleString('default', {month: 'long'});
     }
   };
 

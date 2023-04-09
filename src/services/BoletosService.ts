@@ -1,6 +1,12 @@
 import create from 'zustand';
-import {IBoleto, IMonth, IPaidBoleto} from '../models/boleto.model';
 import {
+  IBoleto,
+  IMonth,
+  IPaidBoleto,
+  TStatusBoletos,
+} from '../models/boleto.model';
+import {
+  deletePaidBoleto,
   loadAllBoletos,
   loadPaidBoleto,
   saveBoleto,
@@ -94,4 +100,22 @@ export const setAsPaid = async (boleto: IBoleto) => {
   };
 
   savePaidBoleto(paidBoleto);
+};
+
+export const getBoletoStatus = (boleto: IBoleto): TStatusBoletos => {
+  const todayDate = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate(),
+  );
+
+  return new Date(boleto.dueDate) >= todayDate ? 'TO_BE_PAID' : 'LATE';
+};
+
+export const unsetAsPaid = async (boleto: IBoleto) => {
+  const paidBoleto: IPaidBoleto = {
+    idBoleto: boleto.id,
+    paidBoletoMonth: boleto.dueDate,
+  };
+  deletePaidBoleto(paidBoleto);
 };

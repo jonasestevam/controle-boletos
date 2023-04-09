@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
 import {
   Menu,
@@ -10,7 +10,11 @@ import {widthPercentageToDP} from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
 import {translate} from '../../i18n/locales';
 import {IBoleto, TStatusBoletos} from '../../models/boleto.model';
-import {setAsPaid} from '../../services/BoletosService';
+import {
+  getBoletoStatus,
+  setAsPaid,
+  unsetAsPaid,
+} from '../../services/BoletosService';
 import theme from '../../theme';
 import currencyFormat from '../../utils/currencyFormat';
 import {Container as MenuContainer, Option} from '../MenuOptions';
@@ -50,6 +54,9 @@ const setPaid = async (boleto: IBoleto) => {
     text2: 'Boleto pago! ✅ ',
     visibilityTime: 4500,
   });
+};
+const unsetPaid = async (boleto: IBoleto) => {
+  await unsetAsPaid(boleto);
 };
 
 const cardStyle: StyleProp<ViewStyle> = {
@@ -94,15 +101,31 @@ const BoletoCard = ({boleto}: IBoletoCard) => {
           backgroundColor: theme.COLORS.black,
           borderRadius: theme.SIZES.small,
         }}>
-        <MenuOption
-          onSelect={() => {
-            setStatus('PAID');
-            setPaid(boleto);
-          }}>
-          <MenuContainer>
-            <Option icon="check" textColor="green" text="Pay" />
-          </MenuContainer>
-        </MenuOption>
+        {status === 'PAID' ? (
+          <>
+            <MenuOption
+              onSelect={() => {
+                setStatus(getBoletoStatus(boleto));
+                unsetPaid(boleto);
+              }}>
+              <MenuContainer>
+                <Option icon="close" textColor="red" text="Unmark as paid" />
+              </MenuContainer>
+            </MenuOption>
+          </>
+        ) : (
+          <>
+            <MenuOption
+              onSelect={() => {
+                setStatus('PAID');
+                setPaid(boleto);
+              }}>
+              <MenuContainer>
+                <Option icon="check" textColor="green" text="Pay" />
+              </MenuContainer>
+            </MenuOption>
+          </>
+        )}
 
         <MenuOption>
           <MenuContainer>

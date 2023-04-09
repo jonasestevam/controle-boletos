@@ -13,7 +13,7 @@ export const Container = styled.View`
 
 export const ButtonChangePage = styled(Icon)<IChangePageBt>`
   font-size: ${({theme, direction}) =>
-    direction === 'left' ? theme.SIZES.medium : theme.SIZES.xMedium}px;
+    direction === 'left' ? theme.SIZES.small : theme.SIZES.xMedium}px;
   color: ${({theme, direction}) =>
     direction === 'left'
       ? theme.COLORS.white + 'BB'
@@ -25,7 +25,7 @@ export const MonthsList = styled.FlatList`
   width: ${({theme}) => theme.SIZES.screenWidth}px;
 `;
 export const MonthsListContainer = styled.View`
-  height: ${({theme}) => theme.SIZES.screenHeight}px;
+  height: ${({theme}) => theme.SIZES.screenHeight - theme.SIZES.xLarge}px;
   width: ${({theme}) => theme.SIZES.screenWidth}px;
 `;
 
@@ -54,6 +54,10 @@ export const IndicatorsContainer = styled.View`
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
+`;
+export const HeaderTextContainer = styled.View`
+  margin-left: ${({theme}) => theme.SIZES.xMedium}px;
+  margin-right: ${({theme}) => theme.SIZES.xMedium}px;
 `;
 
 export const BoletosList = styled.FlatList``;

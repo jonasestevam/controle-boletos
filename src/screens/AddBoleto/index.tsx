@@ -19,7 +19,7 @@ import {ControlledTextInput} from '../../components/ControlledTextInput';
 import {DatePicker} from '../../components/DatePicker';
 import {Header} from '../../components/Header';
 import {TabNavigator} from '../../components/TabNavigator';
-import IBoleto, {TPeriod} from '../../models/boleto.model';
+import {IBoleto, TPeriod} from '../../models/boleto.model';
 import {useStoreBoletos} from '../../services/BoletosService';
 import theme from '../../theme';
 const controlledFormSchema = yup.object({
@@ -140,7 +140,7 @@ const AddBoleto = ({navigation}) => {
         onPageSelected={handlePageSelect}
         ref={ref => setPagerRef(ref)}>
         <StepContainer key="1">
-          <Text>Quanto você vai pagar?</Text>
+          <Text>Qual o valor da conta?</Text>
           <InputContainer>
             <ControlledTextInput
               error={errors.price}
@@ -159,7 +159,7 @@ const AddBoleto = ({navigation}) => {
         </StepContainer>
 
         <StepContainer key="2">
-          <Text>Dê uma descrição a esse boleto...</Text>
+          <Text>Dê uma descrição...</Text>
           <InputContainer>
             <ControlledTextInput
               error={errors.description}

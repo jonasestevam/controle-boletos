@@ -11,6 +11,7 @@ import {
   Container,
   HeaderContainer,
   HeaderText,
+  HeaderTextContainer,
   IndicatorsContainer,
   MonthsList,
   MonthsListContainer,
@@ -20,6 +21,7 @@ import {
 const HomeScreen = ({navigation}: any) => {
   const [isLoading] = useState(false);
   const [months, setMonths] = useState<IMonth[]>();
+  const [currentPageNumber, setCurrentPageNumber] = useState<number>(0);
 
   const loadBoletos = useStoreBoletos(state => state.load);
   const boletos = useStoreBoletos(state => state.boletos);
@@ -27,6 +29,15 @@ const HomeScreen = ({navigation}: any) => {
   const RenderBoletos: ListRenderItem<any> = ({item}) => (
     <BoletoCard boleto={item} />
   );
+
+  const onScrollEnd = (event: any) => {
+    if (event.nativeEvent) {
+      let contentOffset = event.nativeEvent.contentOffset;
+      let viewSize = event.nativeEvent.layoutMeasurement;
+      let pageNum = Math.floor(contentOffset.x / viewSize.width);
+      setCurrentPageNumber(pageNum);
+    }
+  };
 
   const onClickAddHandler = () => {
     navigation.push('AddBoleto');
@@ -50,11 +61,13 @@ const HomeScreen = ({navigation}: any) => {
     return (
       <MonthsListContainer>
         <HeaderContainer>
-          <ButtonChangePage name="caretleft" direction="left" />
-          <View>
+          {currentPageNumber !== 0 && (
+            <ButtonChangePage name="caretleft" direction="left" />
+          )}
+          <HeaderTextContainer>
             <HeaderText>{item.name}</HeaderText>
             <SubHeaderText>{item.year}</SubHeaderText>
-          </View>
+          </HeaderTextContainer>
           <ButtonChangePage name="caretright" direction="right" />
         </HeaderContainer>
         <IndicatorsContainer>
@@ -71,6 +84,7 @@ const HomeScreen = ({navigation}: any) => {
         <>
           <Container>
             <MonthsList
+              onMomentumScrollEnd={onScrollEnd}
               horizontal
               pagingEnabled
               data={months}
@@ -83,17 +97,5 @@ const HomeScreen = ({navigation}: any) => {
     </>
   );
 };
-
-//TODO:
-// 1. Carregar boletos do storage
-// 2. Colocar na memória os próximos 12 meses
-// 3. O objeto salvo na memória deve ser um array com 12 posições, cada posição, um mês
-// 4. No objeto deve ter: Nome do mês, ano, array de boletos daquele mês
-// 5. Cadas boleto no array deve conter: description, price, status, dueDate
-// 6. status deve ser definidio consultado uma tabela que guardará as contas que já foram pagas, se ela não foi paga, verificar se já venceu
-// 7. Deve ter uma seta para trocar o mês na página inicial
-
-//TODO:
-// IGNORAR HORÁRIO NA GERAÇÃO DOS BOLETOS, PARA EVITAR PROBLEMAS NO FUTURO
 
 export default HomeScreen;

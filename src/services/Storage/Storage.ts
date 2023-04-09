@@ -3,6 +3,7 @@ import {nanoid} from 'nanoid';
 import 'react-native-get-random-values';
 import Storage from 'react-native-storage';
 import {IBoleto, IPaidBoleto} from '../../models/boleto.model';
+import {paidBoletoCompKeyGenerator} from '../../utils/compositeKeyGen';
 
 const storage = new Storage({
   size: 25000,
@@ -51,10 +52,30 @@ export const savePaidBoleto = async (
     )
       return;
 
+    paidBoleto.compositeKey = paidBoletoCompKeyGenerator(paidBoleto);
+
     storage.save({key: 'paidBoletos', data: [...paidBoletos, paidBoleto]});
   } catch (error) {
     console.log('savePaidBoleto', error);
     storage.save({key: 'paidBoletos', data: [paidBoleto]});
+  }
+};
+
+export const deletePaidBoleto = async (boletoToDelete: IPaidBoleto) => {
+  try {
+    const allBoletos = await loadPaidBoleto();
+
+    const newPaidBoletos = allBoletos.filter(savedBoleto => {
+      const boletoToDeleteCompKey = paidBoletoCompKeyGenerator(boletoToDelete);
+      return savedBoleto.compositeKey !== boletoToDeleteCompKey;
+    });
+
+    console.log('allboletos', allBoletos);
+    console.log('newPaidBoletos', newPaidBoletos);
+
+    await storage.save({key: 'paidBoletos', data: newPaidBoletos});
+  } catch (error) {
+    console.log(error);
   }
 };
 
