@@ -17,87 +17,56 @@ export const useStoreBoletos = create<IUseStoreBoletos>(set => ({
   },
   save: async (oldBoletos, newBoleto) => {
     await save(newBoleto);
-    // setBoletosStatus([newBoleto]);
     set({boletos: [...oldBoletos, newBoleto]});
   },
 }));
 
-const setBoletosStatus = (boletos: IBoleto[]): void => {
-  const today = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth(),
-    new Date().getDate(),
-  );
-  boletos.map(boleto => {
-    const dueDate = new Date(
-      new Date(boleto.dueDate as Date).getFullYear(),
-      new Date(boleto.dueDate as Date).getMonth(),
-      new Date(boleto.dueDate as Date).getDate(),
-    );
-
-    if (boleto.status !== 'PAID') {
-      if (dueDate >= today) {
-        boleto.status = 'TO_BE_PAID';
-      } else {
-        boleto.status = 'LATE';
-      }
-    }
-  });
-};
-
-const getBoletoStatus = (boletos: IBoleto[], monthDate: Date): IBoleto[] => {
-  const boletosWithStatus: IBoleto[] = [];
-  boletos.forEach(boleto => {
-    const dueDate = new Date(
-      monthDate.getFullYear(),
-      monthDate.getMonth(),
-      new Date(boleto.dueDate as Date).getDate(),
-    );
-
-    if (boleto.status !== 'PAID') {
-      if (dueDate >= new Date()) {
-        boleto.status = 'TO_BE_PAID';
-        console.log('TO_BE_PAID', boleto, dueDate);
-      } else {
-        boleto.status = 'LATE';
-        console.log('LATE', boleto, dueDate);
-      }
-    }
-
-    boletosWithStatus.push(boleto);
-  });
-
-  return boletosWithStatus;
-};
-
 export const loadFromStorage = async (): Promise<IBoleto[]> => {
   const boletos: IBoleto[] | undefined = await loadAll();
-  // setBoletosStatus(boletos);
   return boletos;
 };
 
 export function buildTheYear(boletos: IBoleto[]): IMonth[] {
+  const todayDate = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate(),
+  );
   const months: IMonth[] = [];
-  //pega o mês atual e mais 11 meses seguintes
-  for (let i = 0; i < 12; i++) {
-    const date = new Date();
-    date.setMonth(new Date().getMonth() + i);
-    const monthName = date.toLocaleString('default', {month: 'long'});
 
-    const thisMonthsBoletos = Array.from(boletos).filter(boleto => {
-      return (
-        new Date(boleto.dueDate).getMonth() === date.getMonth() ||
-        boleto.isRecurrent
-      );
-    });
+  for (let i = 0; i < 12; i++) {
+    const monthDate = new Date();
+    monthDate.setMonth(new Date().getMonth() + i);
+    const monthName = monthDate.toLocaleString('default', {month: 'long'});
+
+    const monthsBoletos: IBoleto[] = boletos
+      .filter(
+        item =>
+          new Date(item.dueDate).getMonth() === monthDate.getMonth() ||
+          item.isRecurrent,
+      )
+      .map(item => {
+        if (!item.status) {
+          const isNotLate =
+            new Date(item.dueDate) >= todayDate ||
+            new Date(item.dueDate).getMonth() < monthDate.getMonth() ||
+            new Date(item.dueDate).getFullYear() < monthDate.getFullYear();
+
+          return {...item, status: isNotLate ? 'TO_BE_PAID' : 'LATE'};
+        } else {
+          return {...item};
+        }
+      });
 
     months.push({
       name: monthName.charAt(0).toUpperCase() + monthName.slice(1),
-      year: date.getFullYear().toString(),
-      boletos: getBoletoStatus(thisMonthsBoletos, date),
+      year: monthDate.getFullYear().toString(),
+      boletos: monthsBoletos,
+      income: 0,
+      outcome: monthsBoletos.reduce((accumulator, boleto) => {
+        return accumulator + Number(boleto.price);
+      }, 0),
     });
   }
-  console.log(JSON.stringify(months));
-
   return months;
 }

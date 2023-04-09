@@ -1,12 +1,12 @@
 import styled from 'styled-components/native';
-import {StatusBoletos} from '../../screens/AddBoleto/IBoleto';
 import themeRoot from '../../theme';
+import { TStatusBoletos } from '../../models/boleto.model';
 
 interface IBoletoStatus {
-  status?: StatusBoletos;
+  status?: TStatusBoletos;
 }
 
-const getStatusColor = (status: StatusBoletos | undefined): string => {
+const getStatusColor = (status: TStatusBoletos | undefined): string => {
   switch (status) {
     case 'LATE':
       return themeRoot.COLORS.red;

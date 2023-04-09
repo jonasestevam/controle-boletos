@@ -3,6 +3,7 @@ import {ListRenderItem, View} from 'react-native';
 import AddButton from '../../components/AddButton';
 import BoletoCard from '../../components/BoletoCard';
 import Indicator from '../../components/Indicator';
+import {IMonth} from '../../models/boleto.model';
 import {buildTheYear, useStoreBoletos} from '../../services/BoletosService';
 import {
   BoletosList,
@@ -22,10 +23,6 @@ const HomeScreen = ({navigation}: any) => {
 
   const loadBoletos = useStoreBoletos(state => state.load);
   const boletos = useStoreBoletos(state => state.boletos);
-
-  const outcome = boletos.reduce((accumulator, boleto) => {
-    return accumulator + Number(boleto.price);
-  }, 0);
 
   const RenderBoletos: ListRenderItem<any> = ({item}) => (
     <BoletoCard boleto={item} />
@@ -59,8 +56,8 @@ const HomeScreen = ({navigation}: any) => {
           <ButtonChangePage name="caretright" direction="right" />
         </HeaderContainer>
         <IndicatorsContainer>
-          <Indicator amount={0} type="income" />
-          <Indicator amount={outcome} type="outcome" />
+          <Indicator amount={item.income} type="income" />
+          <Indicator amount={item.outcome} type="outcome" />
         </IndicatorsContainer>
         <BoletosList data={item.boletos} renderItem={RenderBoletos} />
       </MonthsListContainer>
@@ -75,7 +72,7 @@ const HomeScreen = ({navigation}: any) => {
               horizontal
               pagingEnabled
               data={months}
-              renderItem={RenderMonthsItem}
+              renderItem={RenderMonthsItem as any}
             />
           </Container>
           <AddButton action={onClickAddHandler} />

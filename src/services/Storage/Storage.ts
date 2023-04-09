@@ -1,8 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { nanoid } from 'nanoid';
 import 'react-native-get-random-values';
 import Storage from 'react-native-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import IBoleto from '../../screens/AddBoleto/IBoleto';
-import {nanoid} from 'nanoid';
+import { IBoleto } from '../../models/boleto.model';
 
 const storage = new Storage({
   size: 25000,

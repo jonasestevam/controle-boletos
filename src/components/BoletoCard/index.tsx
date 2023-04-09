@@ -1,18 +1,18 @@
 import React from 'react';
-import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
+import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
 import {
   Menu,
   MenuOption,
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import {widthPercentageToDP} from 'react-native-responsive-screen';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
-import {translate} from '../../i18n/locales';
-import IBoleto from '../../models/boleto.model';
+import { translate } from '../../i18n/locales';
+import { IBoleto } from '../../models/boleto.model';
 import theme from '../../theme';
 import currencyFormat from '../../utils/currencyFormat';
-import {Option, Container as MenuContainer} from '../MenuOptions';
+import { Container as MenuContainer, Option } from '../MenuOptions';
 import {
   AmountContainer,
   AmountText,

@@ -16,6 +16,6 @@ export interface IMonth {
   name: string;
   year: string;
   boletos: IBoleto[] | undefined;
+  outcome: number;
+  income: number;
 }
-
-
