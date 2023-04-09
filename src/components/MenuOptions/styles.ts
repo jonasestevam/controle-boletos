@@ -24,7 +24,7 @@ export const StyledOptionContainer = styled.View`
   border-radius: ${({theme}) => theme.SIZES.small}px;
 `;
 
-export const OptionContainer = styled.TouchableOpacity`
+export const OptionContainer = styled.View`
   flex-direction: row;
   align-items: center;
   padding: ${({theme}) => theme.SIZES.small}px;

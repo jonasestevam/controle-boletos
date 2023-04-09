@@ -1,18 +1,19 @@
-import React from 'react';
-import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
 import {
   Menu,
   MenuOption,
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
+import {widthPercentageToDP} from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
-import { translate } from '../../i18n/locales';
-import { IBoleto } from '../../models/boleto.model';
+import {translate} from '../../i18n/locales';
+import {IBoleto, TStatusBoletos} from '../../models/boleto.model';
+import {setAsPaid} from '../../services/BoletosService';
 import theme from '../../theme';
 import currencyFormat from '../../utils/currencyFormat';
-import { Container as MenuContainer, Option } from '../MenuOptions';
+import {Container as MenuContainer, Option} from '../MenuOptions';
 import {
   AmountContainer,
   AmountText,
@@ -28,8 +29,8 @@ interface IBoletoCard {
   boleto: IBoleto;
 }
 
-const getStatusText = (boleto: IBoleto): string => {
-  switch (boleto.status) {
+const getStatusText = (status: TStatusBoletos | undefined): string => {
+  switch (status) {
     case 'LATE':
       return translate('LATE_BOLETO_TEXT');
     case 'PAID':
@@ -41,7 +42,8 @@ const getStatusText = (boleto: IBoleto): string => {
   }
 };
 
-const setAsPaid = () => {
+const setPaid = async (boleto: IBoleto) => {
+  await setAsPaid(boleto);
   Toast.show({
     type: 'success',
     text1: 'Uhull!',
@@ -62,6 +64,9 @@ const cardStyle: StyleProp<ViewStyle> = {
 };
 
 const BoletoCard = ({boleto}: IBoletoCard) => {
+  const [status, setStatus] = useState<TStatusBoletos | undefined>(
+    boleto.status,
+  );
   return (
     <Menu>
       <MenuTrigger
@@ -70,8 +75,8 @@ const BoletoCard = ({boleto}: IBoletoCard) => {
           TriggerTouchableComponent: TouchableOpacity,
           triggerWrapper: cardStyle,
         }}>
-        <Status status={boleto.status}>
-          <StatusText>{getStatusText(boleto)}</StatusText>
+        <Status status={status}>
+          <StatusText>{getStatusText(status)}</StatusText>
         </Status>
         <DueDateContainer>
           <DueDate>{new Date(boleto.dueDate as Date).getDate()}</DueDate>
@@ -89,7 +94,11 @@ const BoletoCard = ({boleto}: IBoletoCard) => {
           backgroundColor: theme.COLORS.black,
           borderRadius: theme.SIZES.small,
         }}>
-        <MenuOption onSelect={setAsPaid}>
+        <MenuOption
+          onSelect={() => {
+            setStatus('PAID');
+            setPaid(boleto);
+          }}>
           <MenuContainer>
             <Option icon="check" textColor="green" text="Pay" />
           </MenuContainer>

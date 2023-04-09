@@ -19,3 +19,8 @@ export interface IMonth {
   outcome: number;
   income: number;
 }
+
+export interface IPaidBoleto {
+  idBoleto: string;
+  paidBoletoMonth: Date;
+}

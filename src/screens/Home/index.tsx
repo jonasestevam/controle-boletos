@@ -39,9 +39,11 @@ const HomeScreen = ({navigation}: any) => {
   }, [loadBoletos]);
 
   useEffect(() => {
-    if (boletos.length) {
-      setMonths(buildTheYear(boletos));
-    }
+    (async () => {
+      if (boletos.length) {
+        setMonths(await buildTheYear(boletos));
+      }
+    })();
   }, [boletos]);
 
   const RenderMonthsItem: ListRenderItem<IMonth> = ({item}) => {

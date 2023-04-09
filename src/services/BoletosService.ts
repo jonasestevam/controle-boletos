@@ -1,6 +1,11 @@
-import {IBoleto, IMonth} from '../models/boleto.model';
-import {loadAll, save} from './Storage/Storage';
 import create from 'zustand';
+import {IBoleto, IMonth, IPaidBoleto} from '../models/boleto.model';
+import {
+  loadAllBoletos,
+  loadPaidBoleto,
+  saveBoleto,
+  savePaidBoleto,
+} from './Storage/Storage';
 
 interface IUseStoreBoletos {
   load: () => Promise<IBoleto[] | undefined>;
@@ -16,23 +21,25 @@ export const useStoreBoletos = create<IUseStoreBoletos>(set => ({
     return boletos;
   },
   save: async (oldBoletos, newBoleto) => {
-    await save(newBoleto);
+    await saveBoleto(newBoleto);
     set({boletos: [...oldBoletos, newBoleto]});
   },
 }));
 
 export const loadFromStorage = async (): Promise<IBoleto[]> => {
-  const boletos: IBoleto[] | undefined = await loadAll();
+  const boletos: IBoleto[] | undefined = await loadAllBoletos();
   return boletos;
 };
 
-export function buildTheYear(boletos: IBoleto[]): IMonth[] {
+export async function buildTheYear(boletos: IBoleto[]): Promise<IMonth[]> {
   const todayDate = new Date(
     new Date().getFullYear(),
     new Date().getMonth(),
     new Date().getDate(),
   );
   const months: IMonth[] = [];
+
+  const paidBoletos = await loadPaidBoleto();
 
   for (let i = 0; i < 12; i++) {
     const monthDate = new Date();
@@ -46,15 +53,24 @@ export function buildTheYear(boletos: IBoleto[]): IMonth[] {
           item.isRecurrent,
       )
       .map(item => {
-        if (!item.status) {
-          const isNotLate =
-            new Date(item.dueDate) >= todayDate ||
-            new Date(item.dueDate).getMonth() < monthDate.getMonth() ||
-            new Date(item.dueDate).getFullYear() < monthDate.getFullYear();
+        item.dueDate = new Date(
+          monthDate.getFullYear(),
+          monthDate.getMonth(),
+          new Date(item.dueDate).getDate(),
+        );
 
-          return {...item, status: isNotLate ? 'TO_BE_PAID' : 'LATE'};
+        if (
+          paidBoletos.find(
+            paid =>
+              paid.idBoleto == item.id &&
+              new Date(paid.paidBoletoMonth).toString() ==
+                new Date(item.dueDate).toString(),
+          )
+        ) {
+          return {...item, status: 'PAID'};
         } else {
-          return {...item};
+          const isNotLate = new Date(item.dueDate) >= todayDate;
+          return {...item, status: isNotLate ? 'TO_BE_PAID' : 'LATE'};
         }
       });
 
@@ -70,3 +86,12 @@ export function buildTheYear(boletos: IBoleto[]): IMonth[] {
   }
   return months;
 }
+
+export const setAsPaid = async (boleto: IBoleto) => {
+  const paidBoleto: IPaidBoleto = {
+    idBoleto: boleto.id,
+    paidBoletoMonth: boleto.dueDate,
+  };
+
+  savePaidBoleto(paidBoleto);
+};
