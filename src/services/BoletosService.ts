@@ -6,7 +6,9 @@ import {
   TStatusBoletos,
 } from '../models/boleto.model';
 import {
+  deleteBoleto,
   deletePaidBoleto,
+  editBoleto,
   loadAllBoletos,
   loadPaidBoleto,
   saveBoleto,
@@ -16,6 +18,8 @@ import {
 interface IUseStoreBoletos {
   load: () => Promise<IBoleto[] | undefined>;
   save: (oldBoletos: IBoleto[], newBoleto: IBoleto) => void;
+  edit: (editedBoletos: IBoleto) => void;
+  delete: (idBoleto: string) => void;
   boletos: IBoleto[];
 }
 
@@ -26,14 +30,25 @@ export const useStoreBoletos = create<IUseStoreBoletos>(set => ({
     set({boletos: boletos});
     return boletos;
   },
+
   save: async (oldBoletos, newBoleto) => {
     await saveBoleto(newBoleto);
     set({boletos: [...oldBoletos, newBoleto]});
   },
+
+  edit: async editedBoletos => {
+    const newBoletos = await editBoleto(editedBoletos);
+    set({boletos: newBoletos});
+  },
+
+  delete: async boletoId => {
+    const newBoletos = await deleteBoleto(boletoId);
+    set({boletos: newBoletos});
+  },
 }));
 
 export const loadFromStorage = async (): Promise<IBoleto[]> => {
-  const boletos: IBoleto[] | undefined = await loadAllBoletos();
+  const boletos: IBoleto[] = await loadAllBoletos();
   return boletos;
 };
 
@@ -81,6 +96,7 @@ export async function buildTheYear(boletos: IBoleto[]): Promise<IMonth[]> {
       });
 
     months.push({
+      index: monthDate.getMonth(),
       name: monthName.charAt(0).toUpperCase() + monthName.slice(1),
       year: monthDate.getFullYear().toString(),
       boletos: monthsBoletos,

@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import NoDataSVG from '../../assets/illustrations/no_data.svg';
 
 export interface IChangePageBt {
   direction?: 'right' | 'left';
@@ -58,6 +59,27 @@ export const IndicatorsContainer = styled.View`
 export const HeaderTextContainer = styled.View`
   margin-left: ${({theme}) => theme.SIZES.xMedium}px;
   margin-right: ${({theme}) => theme.SIZES.xMedium}px;
+`;
+
+export const NoDataIconContainer = styled.View`
+  align-items: center;
+`;
+export const NoDataText = styled.Text`
+  opacity: 0.5;
+  font-family: ${({theme}) => theme.FONTS.thin};
+  font-size: ${({theme}) => theme.SIZES.medium}px;
+  margin-top: ${({theme}) => theme.SIZES.small}px;
+  color: ${({theme}) => theme.COLORS.white};
+`;
+
+export const EmptyListAddButton = styled(Icon)`
+  font-size: ${({theme}) => theme.SIZES.large}px;
+  color: ${({theme}) => theme.COLORS.white};
+  padding: ${({theme}) => theme.SIZES.small}px;
+  background-color: ${({theme}) => theme.COLORS.black};
+  border-radius: ${({theme}) => theme.SIZES.large}px;
+  margin-top: ${({theme}) => theme.SIZES.small}px;
+  margin-right: ${({theme}) => theme.SIZES.small}px;
 `;
 
 export const BoletosList = styled.FlatList``;

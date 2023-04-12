@@ -29,10 +29,56 @@ export const saveBoleto = async (boleto: IBoleto): Promise<void> => {
   try {
     generateUUID(boleto);
     const boletos = await storage.load({key: 'boletos'});
-    storage.save({key: 'boletos', data: [...boletos, boleto]});
+    await storage.save({key: 'boletos', data: [...boletos, boleto]});
   } catch (error) {
     storage.save({key: 'boletos', data: [boleto]});
     console.error(error);
+  }
+};
+
+const getSingleBoletoById = async (
+  idBoleto: string,
+): Promise<IBoleto | undefined> => {
+  try {
+    const boletos = await storage.load<IBoleto[]>({key: 'boletos'});
+    return boletos.filter(boleto => boleto.id === idBoleto)[0];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const editBoleto = async (editedBoleto: IBoleto): Promise<IBoleto[]> => {
+  try {
+    const boletos = await storage.load<IBoleto[]>({key: 'boletos'});
+    const newBoletos = boletos.filter(boleto => boleto.id != editedBoleto.id);
+    await storage.save({key: 'boletos', data: [...newBoletos, editedBoleto]});
+    return [...newBoletos, editedBoleto];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const deleteBoleto = async (boletoId: string): Promise<IBoleto[]> => {
+  try {
+    const boletos = await storage.load<IBoleto[]>({key: 'boletos'});
+    const newBoletos = boletos.filter(boleto => boleto.id != boletoId);
+    await storage.save({key: 'boletos', data: [...newBoletos]});
+
+    const paidBoletos = await loadPaidBoleto();
+
+    const newPaidBoletos = paidBoletos.filter(
+      paid => paid.idBoleto != boletoId,
+    );
+
+    await storage.save({key: 'paidBoletos', data: newPaidBoletos});
+
+    console.log('newPaidBoletos', newPaidBoletos);
+
+    return newBoletos;
+  } catch (error) {
+    console.error(error);
+    return [];
   }
 };
 
@@ -83,7 +129,7 @@ export const loadPaidBoleto = async (): Promise<IPaidBoleto[]> => {
   try {
     return await storage.load({key: 'paidBoletos'});
   } catch (error) {
-    console.error('loadPaidBoleto', error);
+    console.log('loadPaidBoleto', error);
     return [];
   }
 };

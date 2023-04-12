@@ -13,8 +13,8 @@ import {
 import {TouchableOpacity} from 'react-native';
 
 interface IDatePicker {
-  onDateChange: (args: Date | undefined) => void;
-  value: Date | undefined;
+  onDateChange: (args: Date) => void;
+  value: Date;
 }
 
 export const DatePicker = ({onDateChange, value}: IDatePicker) => {

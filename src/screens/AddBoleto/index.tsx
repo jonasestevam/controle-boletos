@@ -27,24 +27,26 @@ const controlledFormSchema = yup.object({
   description: yup.string().max(25).required('Informe uma descrição'),
 });
 
-const AddBoleto = ({navigation}) => {
+const AddBoleto = ({navigation, route}: any) => {
   const {
     control,
     handleSubmit,
     formState: {errors},
+    setValue,
   } = useForm<IBoleto>({
     resolver: yupResolver(controlledFormSchema),
   });
   const priceInputRef = useRef<TextInput>();
   const descriptionInputRef = useRef<TextInput>();
   const [pagerRef, setPagerRef] = useState<PagerView | null>();
-  const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
+  const [dueDate, setDueDate] = useState<Date>(new Date());
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-  // const [isRecurrent, setIsRecurrent] = useState<boolean>(false);
+  const [isEdition, setIsEdition] = useState<boolean>(false);
   const [period, setPeriodo] = useState<TPeriod>('MONTHLY');
 
   const saveBoleto = useStoreBoletos(state => state.save);
+  const editBoleto = useStoreBoletos(state => state.edit);
   const curentBoletosList = useStoreBoletos(state => state.boletos);
 
   const handlePageSelect = (event: PagerViewOnPageSelectedEvent) => {
@@ -91,12 +93,17 @@ const AddBoleto = ({navigation}) => {
       isRecurrent = false;
     }
     const inputData: IBoleto = {...data, period, isRecurrent, dueDate};
-    saveBoleto(curentBoletosList, inputData);
+
+    if (isEdition) {
+      editBoleto(inputData);
+    } else {
+      saveBoleto(curentBoletosList, inputData);
+    }
     Toast.show({
       type: 'success',
       text1: 'Boleto salvo!',
       text2: 'Você receberá uma notificação na data do vencimento 😉',
-      visibilityTime: 7000,
+      visibilityTime: 3500,
     });
     navigation.pop();
   };
@@ -121,6 +128,28 @@ const AddBoleto = ({navigation}) => {
       return goToPage(0);
     }
   }, [errors, goToPage]);
+
+  const setBoletoToEdit = (boletoToEdit: IBoleto) => {
+    setValue('id', boletoToEdit.id);
+    setDueDate(new Date(boletoToEdit.dueDate));
+    setPeriodo(boletoToEdit.isRecurrent ? 'MONTHLY' : 'ONCE');
+    setValue('price', boletoToEdit.price);
+    setValue('description', boletoToEdit.description);
+  };
+
+  useEffect(() => {
+    if (route.params && route.params.boletoToEdit) {
+      setBoletoToEdit(route.params.boletoToEdit);
+      setIsEdition(true);
+    }
+
+    if (route.params && route.params.month && route.params.year) {
+      const date = new Date();
+      date.setMonth(route.params.month);
+      date.setFullYear(route.params.year);
+      setDueDate(date);
+    }
+  }, [route.params]);
 
   return (
     <>

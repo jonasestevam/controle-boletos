@@ -13,6 +13,7 @@ export interface IBoleto {
 }
 
 export interface IMonth {
+  index: number;
   name: string;
   year: string;
   boletos: IBoleto[] | undefined;

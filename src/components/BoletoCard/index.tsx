@@ -14,6 +14,7 @@ import {
   getBoletoStatus,
   setAsPaid,
   unsetAsPaid,
+  useStoreBoletos,
 } from '../../services/BoletosService';
 import theme from '../../theme';
 import currencyFormat from '../../utils/currencyFormat';
@@ -28,6 +29,7 @@ import {
   Status,
   StatusText,
 } from './styles';
+import {useNavigation} from '@react-navigation/native';
 
 interface IBoletoCard {
   boleto: IBoleto;
@@ -74,6 +76,22 @@ const BoletoCard = ({boleto}: IBoletoCard) => {
   const [status, setStatus] = useState<TStatusBoletos | undefined>(
     boleto.status,
   );
+
+  const navigation = useNavigation();
+  const deleteBoleto = useStoreBoletos(state => state.delete);
+
+  const onClickEditHandler = (boleto: IBoleto) => {
+    navigation.navigate('AddBoleto', {
+      boletoToEdit: {
+        ...boleto,
+        dueDate: boleto.dueDate.toISOString(),
+      },
+    });
+  };
+  const onClickDeleteHandler = (idBoleto: string) => {
+    deleteBoleto(idBoleto);
+  };
+
   return (
     <Menu>
       <MenuTrigger
@@ -127,13 +145,19 @@ const BoletoCard = ({boleto}: IBoletoCard) => {
           </>
         )}
 
-        <MenuOption>
+        <MenuOption
+          onSelect={() => {
+            onClickEditHandler(boleto);
+          }}>
           <MenuContainer>
             <Option icon="edit" textColor="white" text="Edit" />
           </MenuContainer>
         </MenuOption>
 
-        <MenuOption>
+        <MenuOption
+          onSelect={() => {
+            onClickDeleteHandler(boleto.id);
+          }}>
           <MenuContainer>
             <Option icon="delete" textColor="red" text="Delete" />
           </MenuContainer>
