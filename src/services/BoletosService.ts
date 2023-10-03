@@ -13,7 +13,7 @@ import {
   loadPaidBoleto,
   saveBoleto,
   savePaidBoleto,
-} from './Storage/Storage';
+} from '../storage/Storage';
 
 interface IUseStoreBoletos {
   load: () => Promise<IBoleto[] | undefined>;
